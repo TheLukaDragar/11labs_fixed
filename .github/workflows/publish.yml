@@ -32,7 +32,17 @@ jobs:
         id: extract
         run: |
           FULL_TAG_NAME=${{ github.event.release.tag_name }}
-          PACKAGE_NAME=$(echo "$FULL_TAG_NAME" | rev | cut -d'@' -f2- | rev)
+          
+          # Hard-code mapping from tag to package name
+          if [[ "$FULL_TAG_NAME" == *"client"* ]]; then
+            PACKAGE_NAME="@thelukadragar/elevenlabs-client"
+          elif [[ "$FULL_TAG_NAME" == *"react"* ]]; then
+            PACKAGE_NAME="@thelukadragar/elevenlabs-react"
+          else
+            echo "Could not determine package from tag: $FULL_TAG_NAME"
+            exit 1
+          fi
+          
           if [[ "$FULL_TAG_NAME" == *"beta"* ]]; then
             PUBLISH_TAG="beta"
           else
@@ -46,7 +56,10 @@ jobs:
           echo "Package name is $PACKAGE_NAME"
           echo "Publish tag is $PUBLISH_TAG"
 
+      - name: List all packages in workspace
+        run: pnpm ls -r
+
       - name: Publish package
-        run: pnpm --filter $PACKAGE_NAME publish --access=public --no-git-checks --tag $PUBLISH_TAG
+        run: pnpm --filter "$PACKAGE_NAME" publish --access=public --no-git-checks --tag $PUBLISH_TAG
         env:
           NODE_AUTH_TOKEN: ${{ secrets.MY_NPM_TOKEN }}
