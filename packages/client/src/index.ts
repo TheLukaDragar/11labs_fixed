@@ -496,6 +496,11 @@ export class Conversation {
       type: "user_activity",
     });
   };
+
+  public interrupt = () => {
+    this.lastInterruptTimestamp = this.currentEventId
+    return this.fadeOutAudio()
+  };
 }
 
 export function postOverallFeedback(
