@@ -1,4 +1,4 @@
-import { Language } from "@11labs/client";
+import { Language } from "@thelukadragar/elevenlabs-client";
 
 export type Variant = "full" | "compact";
 export type FeedbackMode = "none" | "during" | "end";

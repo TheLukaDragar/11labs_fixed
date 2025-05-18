@@ -8,7 +8,7 @@ import {
   Status,
   ClientToolsConfig,
   InputConfig,
-} from "@11labs/client";
+} from "@thelukadragar/elevenlabs-client";
 
 export type {
   Role,
@@ -17,8 +17,8 @@ export type {
   SessionConfig,
   DisconnectionDetails,
   Language,
-} from "@11labs/client";
-export { postOverallFeedback } from "@11labs/client";
+} from "@thelukadragar/elevenlabs-client";
+export { postOverallFeedback } from "@thelukadragar/elevenlabs-client";
 
 export type HookOptions = Partial<
   SessionConfig & HookCallbacks & ClientToolsConfig & InputConfig

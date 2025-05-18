@@ -1,5 +1,5 @@
 {
-  "name": "@11labs/convai-widget-embed",
+  "name": "@thelukadragar/convai-widget-embed",
   "version": "0.0.1",
   "description": "The Conversational AI Widget bundled with all dependencies for easy embedding.",
   "main": "./dist/lib.umd.js",
@@ -29,7 +29,7 @@
   "author": "ElevenLabs",
   "license": "MIT",
   "devDependencies": {
-    "@11labs/convai-widget-core": "workspace:*",
+    "@thelukadragar/convai-widget-core": "workspace:*",
     "eslint": "^9.8.0",
     "microbundle": "^0.15.1",
     "typescript": "^5.5.4"

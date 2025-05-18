@@ -1,5 +1,5 @@
 {
-  "name": "@11labs/{{package-name}}",
+  "name": "@thelukadragar/{{package-name}}",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/lib.umd.js",

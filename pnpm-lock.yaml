@@ -53,12 +53,12 @@ importers:
 
   packages/convai-widget-core:
     dependencies:
-      '@11labs/client':
-        specifier: workspace:*
-        version: link:../client
       '@preact/signals':
         specifier: ^2.0.4
         version: 2.0.4(preact@10.26.5)
+      '@thelukadragar/elevenlabs-client':
+        specifier: workspace:*
+        version: link:../client
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -105,7 +105,7 @@ importers:
 
   packages/convai-widget-embed:
     devDependencies:
-      '@11labs/convai-widget-core':
+      '@thelukadragar/convai-widget-core':
         specifier: workspace:*
         version: link:../convai-widget-core
       eslint:
@@ -120,7 +120,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@11labs/client':
+      '@thelukadragar/elevenlabs-client':
         specifier: workspace:*
         version: link:../client
       react:
