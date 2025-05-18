@@ -1,5 +1,5 @@
 {
-  "name": "@11labs/react",
+  "name": "@thelukadragar/elevenlabs-react",
   "version": "0.1.5",
   "description": "ElevenLabs React Library",
   "main": "./dist/lib.umd.js",
