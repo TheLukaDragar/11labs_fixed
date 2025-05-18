@@ -61,4 +61,4 @@ Since there are multiple packages contained in this folder, the release name/tag
 The release will trigger GitHub action publishing the package, and the tag will be used to publish specific package. 
 
 The GitHub action will only run the publish command. Make sure you've update the version number manually in `package.json`.  
-
+.
