@@ -201,6 +201,9 @@ export class Conversation {
 
       // Implement audio ducking based on mode changes
       this.handleAudioDucking(mode, previousMode);
+
+      // Handle smart communication device management
+      this.handleSmartCommunicationDevice(mode, previousMode);
     }
   };
 
@@ -226,12 +229,51 @@ export class Conversation {
       }
     } catch (error) {
       // Log the error but don't interrupt the conversation
-      this.onError("Audio ducking failed", {
-        error,
-        currentMode,
-        previousMode,
-      });
+      this.onError("Audio ducking failed", { error });
     }
+  };
+
+  /**
+   * Handle smart communication device management to avoid interfering with media apps
+   */
+  private handleSmartCommunicationDevice = async (
+    currentMode: Mode,
+    previousMode: Mode
+  ) => {
+    // Only manage communication device if smart mode is enabled
+    if (!this.options.smartCommunicationDevice) {
+      return;
+    }
+
+    try {
+      if (currentMode === "speaking" && previousMode === "listening") {
+        // Agent about to speak - claim the communication device
+        await this.claimCommunicationDevice();
+      } else if (currentMode === "listening" && previousMode === "speaking") {
+        // Agent finished speaking - release back to media apps
+        await this.releaseCommunicationDevice();
+      }
+    } catch (error) {
+      this.onError("Smart communication device management failed", { error });
+    }
+  };
+
+  /**
+   * Claim the communication device for voice agent output
+   */
+  private claimCommunicationDevice = async (): Promise<void> => {
+    // Implementation would depend on platform
+    // This is a placeholder for the actual implementation
+    console.log("Claiming communication device for agent speech");
+  };
+
+  /**
+   * Release the communication device back to media apps
+   */
+  private releaseCommunicationDevice = async (): Promise<void> => {
+    // Implementation would depend on platform
+    // This is a placeholder for the actual implementation
+    console.log("Releasing communication device back to media");
   };
 
   private updateStatus = (status: Status) => {

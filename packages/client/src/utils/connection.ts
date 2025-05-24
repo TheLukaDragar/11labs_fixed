@@ -60,6 +60,8 @@ export type SessionConfig = {
   dynamicVariables?: Record<string, string | number | boolean>;
   useWakeLock?: boolean;
   enableAudioDucking?: boolean;
+  smartCommunicationDevice?: boolean;
+  preserveMediaAudio?: boolean;
   connectionDelay?: {
     default: number;
     android?: number;
