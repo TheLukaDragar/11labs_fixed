@@ -62,7 +62,6 @@ export type SessionConfig = {
   enableAudioDucking?: boolean;
   smartCommunicationDevice?: boolean;
   preserveMediaAudio?: boolean;
-  useMediaAudioMode?: boolean;
   connectionDelay?: {
     default: number;
     android?: number;

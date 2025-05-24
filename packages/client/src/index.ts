@@ -1,6 +1,6 @@
 import { arrayBufferToBase64, base64ToArrayBuffer } from "./utils/audio";
 import { Input, InputConfig } from "./utils/input";
-import { Output, OutputConfig } from "./utils/output";
+import { Output } from "./utils/output";
 import {
   Connection,
   DisconnectionDetails,
@@ -17,7 +17,6 @@ export type {
   DisconnectionDetails,
   Language,
 } from "./utils/connection";
-export type { OutputConfig } from "./utils/output";
 export type Role = "user" | "ai";
 export type Mode = "speaking" | "listening";
 export type Status =
@@ -127,10 +126,7 @@ export class Conversation {
           ...connection.inputFormat,
           preferHeadphonesForIosDevices: options.preferHeadphonesForIosDevices,
         }),
-        Output.create({
-          ...connection.outputFormat,
-          useMediaAudioMode: options.useMediaAudioMode,
-        }),
+        Output.create(connection.outputFormat),
       ]);
 
       preliminaryInputStream?.getTracks().forEach(track => track.stop());
@@ -458,9 +454,6 @@ export class Conversation {
     if (this.options.enableAudioDucking && this.output.isDucked()) {
       await this.output.resumeFromDucking();
     }
-
-    // Ensure audio element is playing for media audio mode (handles autoplay blocking)
-    await this.output.ensureAudioElementPlaying();
 
     this.output.gain.gain.value = this.volume;
     this.output.worklet.port.postMessage({ type: "clearInterrupted" });
