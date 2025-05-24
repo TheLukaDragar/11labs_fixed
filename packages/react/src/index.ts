@@ -8,6 +8,7 @@ import {
   Status,
   ClientToolsConfig,
   InputConfig,
+  OutputConfig,
 } from "@thelukadragar/elevenlabs-client";
 
 export type {
@@ -17,6 +18,7 @@ export type {
   SessionConfig,
   DisconnectionDetails,
   Language,
+  OutputConfig,
 } from "@thelukadragar/elevenlabs-client";
 export { postOverallFeedback } from "@thelukadragar/elevenlabs-client";
 
