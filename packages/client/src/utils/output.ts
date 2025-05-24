@@ -3,6 +3,7 @@ import { FormatConfig } from "./connection";
 
 export class Output {
   private audioElement: HTMLAudioElement | null = null;
+  private isContextSuspended: boolean = false;
 
   public static async create({
     sampleRate,
@@ -49,6 +50,33 @@ export class Output {
     this.audioElement?.pause();
     this.audioElement = null;
     await this.context.close();
+  }
+
+  /**
+   * Suspend the AudioContext to release audio device resources when not speaking
+   */
+  public async suspendForDucking(): Promise<void> {
+    if (this.context.state === "running" && !this.isContextSuspended) {
+      await this.context.suspend();
+      this.isContextSuspended = true;
+    }
+  }
+
+  /**
+   * Resume the AudioContext when about to speak
+   */
+  public async resumeFromDucking(): Promise<void> {
+    if (this.context.state === "suspended" && this.isContextSuspended) {
+      await this.context.resume();
+      this.isContextSuspended = false;
+    }
+  }
+
+  /**
+   * Check if the context is currently suspended for ducking
+   */
+  public isDucked(): boolean {
+    return this.isContextSuspended;
   }
 
   public async setOutputDevice(deviceId: string): Promise<boolean> {

@@ -59,6 +59,7 @@ export type SessionConfig = {
   customLlmExtraBody?: any;
   dynamicVariables?: Record<string, string | number | boolean>;
   useWakeLock?: boolean;
+  enableAudioDucking?: boolean;
   connectionDelay?: {
     default: number;
     android?: number;

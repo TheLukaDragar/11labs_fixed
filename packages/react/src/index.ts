@@ -152,6 +152,19 @@ export function useConversation<T extends HookOptions & ControlledState>(
     setInputDevice: async (deviceId: string): Promise<boolean> => {
       return conversationRef.current?.setInputDevice(deviceId) ?? false;
     },
+    // Audio ducking methods
+    isAudioDuckingEnabled: () => {
+      return conversationRef.current?.isAudioDuckingEnabled() ?? false;
+    },
+    isAudioDucked: () => {
+      return conversationRef.current?.isAudioDucked() ?? false;
+    },
+    suspendAudio: async (): Promise<boolean> => {
+      return conversationRef.current?.suspendAudio() ?? false;
+    },
+    resumeAudio: async (): Promise<boolean> => {
+      return conversationRef.current?.resumeAudio() ?? false;
+    },
     status,
     canSendFeedback,
     micMuted,

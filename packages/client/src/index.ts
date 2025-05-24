@@ -195,8 +195,42 @@ export class Conversation {
 
   private updateMode = (mode: Mode) => {
     if (mode !== this.mode) {
+      const previousMode = this.mode;
       this.mode = mode;
       this.options.onModeChange({ mode });
+
+      // Implement audio ducking based on mode changes
+      this.handleAudioDucking(mode, previousMode);
+    }
+  };
+
+  /**
+   * Handle audio ducking by suspending/resuming AudioContext based on speaking state
+   */
+  private handleAudioDucking = async (
+    currentMode: Mode,
+    previousMode: Mode
+  ) => {
+    // Only perform audio ducking if explicitly enabled
+    if (!this.options.enableAudioDucking) {
+      return;
+    }
+
+    try {
+      if (currentMode === "listening" && previousMode === "speaking") {
+        // Agent finished speaking, suspend audio context to release device
+        await this.output.suspendForDucking();
+      } else if (currentMode === "speaking" && previousMode === "listening") {
+        // Agent about to speak, resume audio context
+        await this.output.resumeFromDucking();
+      }
+    } catch (error) {
+      // Log the error but don't interrupt the conversation
+      this.onError("Audio ducking failed", {
+        error,
+        currentMode,
+        previousMode,
+      });
     }
   };
 
@@ -320,7 +354,12 @@ export class Conversation {
       case "audio": {
         if (this.lastInterruptTimestamp <= parsedEvent.audio_event.event_id) {
           this.options.onAudio(parsedEvent.audio_event.audio_base_64);
-          this.addAudioBase64Chunk(parsedEvent.audio_event.audio_base_64);
+          // Handle async audio chunk addition without blocking
+          this.addAudioBase64Chunk(parsedEvent.audio_event.audio_base_64).catch(
+            error => {
+              this.onError("Failed to add audio chunk", { error });
+            }
+          );
           this.currentEventId = parsedEvent.audio_event.event_id;
           this.updateCanSendFeedback();
           this.updateMode("speaking");
@@ -368,7 +407,12 @@ export class Conversation {
     }
   };
 
-  private addAudioBase64Chunk = (chunk: string) => {
+  private addAudioBase64Chunk = async (chunk: string) => {
+    // Ensure audio context is resumed before playing audio (only if ducking is enabled)
+    if (this.options.enableAudioDucking && this.output.isDucked()) {
+      await this.output.resumeFromDucking();
+    }
+
     this.output.gain.gain.value = this.volume;
     this.output.worklet.port.postMessage({ type: "clearInterrupted" });
     this.output.worklet.port.postMessage({
@@ -500,6 +544,60 @@ export class Conversation {
   public interrupt = () => {
     this.lastInterruptTimestamp = this.currentEventId;
     return this.fadeOutAudio();
+  };
+
+  /**
+   * Check if audio ducking is currently enabled
+   */
+  public isAudioDuckingEnabled = (): boolean => {
+    return !!this.options.enableAudioDucking;
+  };
+
+  /**
+   * Check if the audio output is currently ducked (suspended)
+   */
+  public isAudioDucked = (): boolean => {
+    return this.output.isDucked();
+  };
+
+  /**
+   * Manually suspend audio output (requires audio ducking to be enabled)
+   */
+  public suspendAudio = async (): Promise<boolean> => {
+    if (!this.options.enableAudioDucking) {
+      console.warn(
+        "Audio ducking is not enabled. Enable it in session config to use manual audio control."
+      );
+      return false;
+    }
+
+    try {
+      await this.output.suspendForDucking();
+      return true;
+    } catch (error) {
+      this.onError("Failed to suspend audio", { error });
+      return false;
+    }
+  };
+
+  /**
+   * Manually resume audio output (requires audio ducking to be enabled)
+   */
+  public resumeAudio = async (): Promise<boolean> => {
+    if (!this.options.enableAudioDucking) {
+      console.warn(
+        "Audio ducking is not enabled. Enable it in session config to use manual audio control."
+      );
+      return false;
+    }
+
+    try {
+      await this.output.resumeFromDucking();
+      return true;
+    } catch (error) {
+      this.onError("Failed to resume audio", { error });
+      return false;
+    }
   };
 }
 
